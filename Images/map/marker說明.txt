@@ -1,0 +1,21 @@
+﻿即時狀態 / 站台即時監控
+用戶-連線 c1.png
+用戶-離線 c2.png
+用戶-異常 c3.png
+用戶-關閉 c4.png
+主站-連線 m1.png
+主站-離線 m2.png
+主站-異常 m3.png
+主站-關閉 m4.png
+
+
+即時狀態 / 最新地震資訊
+震央 center.png
+現地 locate.png
+震度1 l1.png
+震度2 l2.png
+震度3 l3.png
+震度4 l4.png
+震度5 l5.png
+震度6 l6.png
+震度7 l7.png

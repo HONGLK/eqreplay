@@ -1,0 +1,97 @@
+@charset "utf-8";
+/* 基本定義 */
+*{-webkit-text-size-adjust:none; -webkit-font-smoothing:antialiased; margin:0;padding:0;}
+pre{white-space: pre-wrap;}
+img{border:0;-ms-interpolation-mode: bicubic;}
+a, a:link, a:visited, a:active, a:hover, area {text-decoration: none; cursor:pointer; }
+table { width:auto; border-collapse: collapse;border-spacing: 0; }
+.clear{ clear:both;}
+:focus {outline: 0;}
+
+/* htmleditor recover 
+.htmlEditor 為頁面用html編輯器顯示的區塊
+.cke_editable 為html編輯器的div class
+*/
+.htmlEditor .cke_inner,
+.htmlEditor .cke_wysiwyg_frame, 
+.htmlEditor .cke_wysiwyg_div{ background-color:transparent;}
+		
+.htmlEditor ul, .htmlEditor ol, 
+.cke_editable ul, .cke_editable ol{ padding-left:30px;}
+.htmlEditor img{ max-width:100%;}
+
+/* 環境錯誤提示 */
+.messagebox.alert{
+	width:100%;padding:8px 0;background-color:#c00;color:#FFF;font-size:14px;
+	font-family:Arial, Helvetica, "微軟正黑體", "新細明體", 'Microsoft JhengHei', 'LiHei Pro', sans-serif;
+	display:none;text-align:left;
+	position:absolute;*position:relative;top:0;z-index:999999;
+	-moz-box-shadow:2px 2px 2px rgba(0,0,0,.4);-webkit-box-shadow: 2px 2px 2px rgba(0,0,0,.4);box-shadow:2px 2px 2px rgba(0,0,0,.4);
+}
+.messagebox.alert .closemessagebox{float:right;margin-right:20px;display:block;cursor:pointer;}
+.messagebox.alert .closemessagebox::after{ content:"關閉繼續瀏覽"; display:inline-block; margin-left:5px;}
+.messagebox.alert .sorry{margin-left:20px;}
+.messagebox.alert .note{margin-top:5px; padding:3px;}
+@media screen and (max-width: 640px) {
+	.messagebox.alert{font-size:24px;}
+	.messagebox.alert .closemessagebox::after{ content:"關閉";}
+}
+/* 行動裝置非預設瀏覽器提示*/
+.mbk{ width:100%; height:100%; background:rgba(0,0,0,.8) url(line.png) no-repeat center; position:fixed; top:0; left:0; z-index:99999;}
+
+/* 參考樣板， 瀏覽器分類(css hack) */
+/* 順序為FF IE8(後面加\9) IE7(前面加*) IE6(前面加_) 專用，順序不能改變 */
+.hack {
+	background:orange;
+	background:red \9;
+	*background:green;
+	_background:blue; 
+}                 
+@media all and (min-width:0px){
+/* Opera、Safari 、Chrome專用 */
+.hack {
+	background:orange;
+}
+}
+/* 反白顏色(FF需另外定義'::-moz-selection') */
+::selection {background:#A81B04; color:#FFF;}
+::-moz-selection {background:#A81B04; color:#FFF;}
+
+
+/* 中文字體sample,英文字在前 */
+/*@import url(http://fonts.googleapis.com/earlyaccess/notosanstc.css); webfont Noto Sans 思源黑體 */
+.samplechinesetext{font-family: Arial, Helvetica, 'Noto Sans TC', 'LiHei Pro', "微軟正黑體", "新細明體", 'Microsoft JhengHei',  sans-serif;}
+
+/* 預設輸入文字, IE需另外加jQuery修復程式 */
+.inputplaceholder::-webkit-input-placeholder { color: #999;}
+.inputplaceholder:-moz-placeholder { color: #999;}
+.inputplaceholder:-ms-input-placeholder { color: #999;}
+
+/* 圓角 */
+.sampleroundborder{
+	border-radius: 5px;
+	/*依序為：左上角、右上角、右下角、左下角*/
+	border-radius: 15px 0px 15px 0px;
+}
+/* 陰影 box-shadow: x y blur spread color inset */
+.sampleshadow{
+	-moz-box-shadow: 	2px 2px 2px rgba(0,0,0,.4);
+	-webkit-box-shadow: 2px 2px 2px rgba(0,0,0,.4);
+	box-shadow: 		2px 2px 2px rgba(0,0,0,.4);
+}
+/* 背景透明 */
+.sampleBGopacity {
+	background-color:rgba(255, 0, 0, 0.6); /* 不透明度 60% 紅色*/
+}
+/* CSS3漸變 */
+.sampleTrans{
+			 transition: background-color .5s;
+		-moz-transition: background-color .5s;
+	 -webkit-transition: background-color .5s;
+		  -o-transition: background-color .5s;
+}
+/* 漸層 http://www.colorzilla.com/gradient-editor/ */
+ @import url('//fonts.googleapis.com/css?family=Noto+Sans+TC&display=swap');
+@import url('//fonts.googleapis.com/css?family=Roboto|Roboto+Condensed|Lato|Noto+Sans+TC&display=swap');
+@import url('//fonts.googleapis.com/icon?family=Material+Icons');
+body, input{font-family: Lato, Arial, Helvetica, 'Noto Sans TC', 'LiHei Pro', "微軟正黑體", "新細明體", 'Microsoft JhengHei',  sans-serif; font-weight: 300; font-size: 20px;}

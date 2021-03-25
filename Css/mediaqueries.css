@@ -1,0 +1,80 @@
+*.pc{ display: inline-block;}
+*.mobile{display: none !important;}
+
+/* ------------------- mediaqueries ------------------- */
+@media screen and (max-height: 760px) {
+	/* NB height */
+    .title{ height: 60px; line-height: 60px;}
+    .title h2 {font-size: 24px;}
+    .mainContent > .block.h100 { height: calc(100vh - 150px);}
+    .mainContent > .block.h50 {height: calc(50vh - 85px);}
+    .title a.searchbtn{ line-height: 60px;}
+    .searchblock{top: 60px;}
+    
+    header nav.menu dt{ margin-top: 5px; font-size: 14px;}
+    header nav.menu a{ font-size: 14px;}
+    header nav.menu dt:first-child{ font-size: 16px; margin-bottom: 10px;}
+    header nav.menu dl {margin: 10px 0 10px 30px;}
+    
+    .mainContent > .tab a{ font-size: 20px;}
+    
+    /*    client_default */
+    ul.userinfo li.name{ font-size: 26px; }
+    ul.userinfo li{padding: 5px;}
+    ul.quakeAlert li{width: 49%; display: inline-block; }
+    ul.quakeAlert li::after{ position: absolute; bottom: 5px; right: 10px; font-size: 26px;}
+    ul.quakeAlert li b{ width: auto; font-size: 30px; margin: 5px 0 5px 40px;}
+    ul.quakeAlert li b i{ font-size: 21px; font-weight: bold;}
+    ul.userinfo i{ display: block;}
+}
+@media screen and (max-width: 1000px) {
+	/* width */
+/*    .title .R_function b.time,*/
+    *.pc{ display: none !important;}
+    *.mobile{display: inline-block !important;}
+    
+    .searchblock .condition ul, .searchblock .condition .other{ width: 100%;}
+    .condition ul li:nth-of-type(2n-1){ width: 85px; text-align: right;}
+    .condition ul li:nth-of-type(2n) {width: calc(50% - 85px - 20px);}
+    
+    .mainContent > .block h6 i.link.on::after{ content: '系統連線正常'; opacity: 1;}
+    .mainContent > .block h6 i.link.off::after{ content: '系統連線異常'; opacity: 1;}
+    
+    .status .mainContent > .block,
+    .client.c01 .mainContent > .block.w66,
+    .simulation.order .mainContent > .block.w33,
+    .simulation.order .mainContent > .block.w66{ width: 100%; margin: 8px 0;}
+    .simulation.order .mainContent > .block.w33{ height: 50% !important;}
+    
+    .client.c01 .mainContent > .block.w33{margin: 0 6px; width: calc(50% - 6px);}
+    .client.c01 .mainContent > .block.w33.name{ margin-left: 0; }
+    .client.c01 .mainContent > .block.w33.quake{margin-right: 0;}
+    .client.c01 .mainContent > .block.w33.cwb{ margin: 8px 0; width: 100%;}
+    
+    .client.c01 .mainContent > .block .userinfo{ height: 100%; overflow: hidden;}
+    ul.quakeAlert li{width: 49%; display: inline-block; }
+    ul.quakeAlert li::after{ position: absolute; bottom: 10px; right: 10px; font-size: 26px;}
+    ul.quakeAlert li b{ width: auto; font-size: 70px; margin: 10px 0;}
+    ul.userinfo i{ display: block;}
+    
+    .client.c01 .mainContent > .block.w66,
+    .status .block.h100:first-child{ height: 60vh;}
+    .status.s01 .block.h50,
+    .status.s02 .block.w50.h100:last-child{ height: auto;}
+    
+    .status.s01 .mainContent > .block:last-child{ margin-left: 0;}
+    
+    div.tablebox.en03d > ul > li:nth-of-type(2n+1){width: 10%; min-width: 120px;}
+
+    
+}
+@media screen and (max-width: 800px) {
+	/* width */
+    
+}
+@media screen and (orientation:portrait) {
+	/* 直式瀏覽 */
+}
+@media screen and (orientation:landscape) {
+	/* 橫式瀏覽 */
+}

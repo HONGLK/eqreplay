@@ -1,0 +1,22 @@
+{
+  "DSEventLog":"log_event.htm",
+  "DSStatusLog":"log_device.htm",
+  "EQHistoryEventEEW":"cwb_alert.htm",
+  "EQHistoryEventEQRP":"cwb_report.htm",
+  "APISendRealLog":"api_record.htm",
+  "APISendSimLog":"api_simulation.htm",
+  "APIStatusLog":"api_client.htm",
+  "GroupManage":"permit_group.htm",
+  "AccountManage":"permit_account.htm",
+  "APIAccountManage":"permit_api.htm",
+  "SiteManage":"manage_site.htm",
+  "SiteGroupManage":"manage_zone.htm",
+  "PublicUserMap":"client_default.htm",
+  "DSAlarmLog":"client_record.htm",
+  "ClientStatusLog":"client_status.htm",
+  "APISimulationTest":"simulation.htm",
+  "SimulationLog":"simulation_client.htm",
+  "ClientMap":"status_news.htm",
+  "MsgComMap":"status_news_cwb.htm",
+  "SiteControlCenter":"status_site_control.htm"
+}

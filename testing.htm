@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- 共用資料 -->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, min-width=800, user-scalable=0, viewport-fit=cover"/>
+
+<!-- favicon.ico iOS icon 152x152px -->
+<link rel="shortcut icon" href="Images/favicon.ico" />
+<link rel="Bookmark" href="Images/favicon.ico" />
+<link rel="icon" href="Images/favicon.ico" type="image/x-icon" />
+<link rel="apple-touch-icon" href="Images/iosicon.png"/>
+
+<!-- SEO -->
+<title>複合式地震速報平台-即時狀態-地震即時回放</title>
+<meta name="keywords" content="複合式地震速報平台">
+<meta name="Description" content="複合式地震速報平台">
+<meta name="robots" content="all" />
+<meta name="author" content="Taiwan Secom Co.,Ltd." />
+
+<!-- Open Graph protocol -->
+<meta property="og:site_name" content="複合式地震速報平台" />
+<meta property="og:url" content="https://ncree-eewsts.dps.tw/" />
+<meta property="og:type" content="website" />
+<meta property="og:description" content="複合式地震速報平台" />
+<meta property="og:image" content="/Images/fbbanner.jpg" />
+<!-- Google Analytics -->
+
+<!-- Google Material icons -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<!-- CSS -->
+<link rel="stylesheet" type="text/css" href="Css/default.css"/>
+<link rel="stylesheet" type="text/css" href="Css/ui.css"/>
+<link rel="stylesheet" type="text/css" href="Css/case.css"/>
+<link rel="stylesheet" type="text/css" href="Css/mediaqueries.css"/>
+
+<!-- jQuery和js載入 -->
+<script type="text/javascript" src="Js/rm/jquery-3.4.1.min.js" ></script>
+<script type="text/javascript" src="Js/rm/realmediaScript.js"></script>
+<script type="text/javascript" src="Js/EWSFrontendClient.js"></script>
+<script type="text/javascript" src="https://api.tgos.tw/TGOS_API/tgos?ver=2&AppID=vnCEz5bdtykwc8b5kq9XELpJBPnQLW+X6wna0ISsV4x6ROI0mlzJ5g==&APIKey=cGEErDNy5yN/1fQ0vyTOZrghjE+jIU6utvQYQpcTnEfy/RUn5h6MuXMI3mx2GGXEnxXllOszU4RZ+Z47O947kl1yBoiGF55jlILjAIEpwHazeFHSKTU5Ro85uqS4BtR6TjHIaCBIXWXv2sPZQuXEOLSS59/SVZ7uHUsKlkH8UfWhVn413Cs3A6u2D1c7Qug4jUTdfJEDmuK/gi3F7jcCsRhr+4E/q7EYuraR5/ZG9A8XlX5Bab3d2aGRHt4QiL03iAdT1fEOX14woH0+TKww9DfSNSULmRXCo2mwIo57WubBMDzmCDAqbYO7JM1vcK/A9dSvN0UEs/5VmkiuU6UASb4A6POJd/CESGxTCc5vFzo5LY11+ooxdPe9OUFQGk/x9Kx4+Ysg0N3hZu5cogFspB8orMIfy25iU3rQoW1+2M7XEgvJRcbScJVh8Ww1m8j5eaXtPhi6wHk=" ></script>
+<script type="text/javascript" src="Js/map.js" ></script>
+<script type="text/javascript" src="Js/main.js" defer></script>
+
+        <script>
+            var pMap,i=0,Mapfill = [],timer,MapData = [],CityCountry = [],time = 100,stop = false,maxStep = 0,t = 0,totalTime = 0,start = 0;
+            var P_speed = 6.5,S_speed = 4,P_circle = null,S_circle = null,c1 = null,c2 = null,P_radius = 0,S_radius = 0;
+            var StationMarker = [],StationData = [],ImgUrl = '/Images/map/locate.png',j = 0,cwbData = [], k = 0;
+            var color = {
+                '1':'#e3ffe2',
+                '2':'#57ff48',
+                '3':'#fbff40',
+                '4':'#f7842e',
+                '5-':'#f64d2e',
+                '5+':'#be3b3b',
+                '6-':'#974543',
+                '6+':'#974984',
+                '7':'#b209e8'
+            }
+            var StationImage = {
+                '0':'/Images/map/locate.png',
+                '1':'/Images/map/lo1.png',
+                '2':'/Images/map/lo2.png',
+                '3':'/Images/map/lo3.png',
+                '4':'/Images/map/lo4.png',
+                '5-':'/Images/map/lo5.png',
+                '5+':'/Images/map/lo5b.png',
+                '6-':'/Images/map/lo6.png',
+                '6+':'/Images/map/lo6b.png',
+                '7':'/Images/map/lo7.png'
+            }
+            var markerPosition = null , marker = null;
+            function clearStep(){
+                var Img = new TGOS.TGImage(ImgUrl, new TGOS.TGSize(19, 17), new TGOS.TGPoint(0, 0), new TGOS.TGPoint(9.5, 8.5));
+                $.each(Mapfill,function(i,v){
+                    if(v.pgnfill != null){
+                        v.pgnfill.setMap(null);
+                    }
+                    v.pgnfill = null;
+                });
+                $.each(StationMarker,function(i,v){
+                    v.marker.setIcon(Img);
+                });
+                P_radius = 0;
+                S_radius = 0;
+                if(c1 != null){
+                    c1.setRadius(0);
+                    P_circle.setPath(c1);
+                }
+                if(c2 != null){
+                    c2.setRadius(0);
+                    S_circle.setPath(c2);
+                }
+                i = 0;
+                t = 0;
+                j = 0;
+                k = 0;
+                $('.process b').width(0);
+            }
+            function SetArea(AreaCode,IntensityX){
+                var index = Mapfill.findIndex(function(item, count){
+                    if(item.id === AreaCode.toString()){
+                        return item;
+                    }
+                });
+                if(index != -1){
+                    var Areafill = Mapfill[index].pgnfill;
+                    if(Areafill == null){
+                        var fill = new TGOS.TGFill(pMap, Mapfill[index].pgn, {
+                                    fillColor: color[IntensityX],
+                                    fillOpacity: 0.7,
+                                    strokeColor: '#000',
+                                    strokeWeight: 1,
+                                    strokeOpacity: 1,
+                                })
+                        Mapfill[index].pgnfill = fill;
+                    }else{
+                        Areafill.setFillColor(color[IntensityX]);
+                    }
+                }
+            }
+            function ChangeStationColor(StationID,IntensityX){
+                 var index = StationMarker.findIndex(function(item, count){
+                    if(item.id === StationID.toString()){
+                        return item;
+                    }
+                });
+                if(index != -1){
+                    var Img = new TGOS.TGImage(StationImage[IntensityX], new TGOS.TGSize(19, 17), new TGOS.TGPoint(0, 0), new TGOS.TGPoint(9.5, 8.5));
+                    StationMarker[index].marker.setIcon(Img);
+                }
+            }
+            function reGetData(){
+                return new Promise(function(resolve,reject){
+                    timer = setTimeout(function(){
+                        resolve();
+                        t+=100;
+                        
+                        var w = (t / totalTime)*100;
+                        $('.process b').width(w+'%');
+                        
+                        var sh_time = start+t;
+                        ShowClock(sh_time*1,t);
+                        if(i < MapData.length){
+                            while(MapData[i].stepTime <= t){
+                                $.each(MapData[i].Arealist,function(i,v){
+                                    SetArea(v.AreaCode,v.IntensityX);
+                                });
+                                i++;
+                            }
+                        }
+                        if(j < StationData.length){
+                            while(StationData[j].stepTime <= t){
+                                if(StationData[j].Level != 0){
+                                    ChangeStationColor(StationData[j].SiteID,StationData[j].Level);
+                                }
+                                j++;
+                            }
+                        }
+                        if(k < cwbData.length){
+                            while(cwbData[k].stepTime <= t){
+                                var d = cwbData[k];
+                                $('#eqid').html(d.identifier);
+                                $('#eqtime').html(new Date(d.SendTime).Format("yyyy/MM/dd hh:mm:ss"));
+                                $('#eqarea').html(d.magnitudeValue);
+                                $('#eqdep').html(d.depth);
+                                k++;
+                            }
+                        }
+                        P_radius+=650;
+                        S_radius+=400;
+                        if(c1 != null){
+                            c1.setRadius(P_radius);
+                            P_circle.setPath(c1); 
+                        }
+                        if(c2 != null){
+                            c2.setRadius(S_radius);
+                            S_circle.setPath(c2);
+                        }
+                    },time/($('#timespeed').val()*1));
+                    
+                }).catch(function(err){
+                    console.log(err);
+                }).then(function(){
+                    if(t > totalTime){
+                        clearInterval(timer);
+                        /*$('select').prop('disabled',false)
+                        stop = false;
+                        $('.play').removeClass('pause');
+                        $('.play').html('開始回放');*/
+                        setTimeout(function(){
+                            if(i == maxStep){
+                                clearStep();
+                            }
+                            stop = false;
+                            reGetData();
+                        },1000)
+                    }else{
+                        if(!stop){
+                            reGetData();
+                        }
+                    }
+                })
+            }
+            function ShowClock(time,s){
+                var second = s / 1000;
+                $('.clock').html(new Date(time).Format('yyyy/MM/dd hh:mm:ss')+'('+second+')');
+                //$('.clock').html(new Date(time)+'('+second+')');
+            }
+            function GetEventData(eventId){
+                StationData = [],MapData = [];
+                $.ajax({
+                    crossDomain: true,
+                    url: __Config.Setting.ServiceAPI + '/POSWEB/?action=INSTANTPLAYDATA',
+                    method: "POST",
+                    data: { "CMD":"INSTANTPLAYDATA","token":getStatus().token,"event_id":eventId},
+                    cache:false,
+                    success:function(response){
+                        if(response.status == 0){
+                            var data = response.data;
+                            $.each(data,function(index,value){
+                                if(value.type == 'CWB'){
+                                    cwbData.push(value);
+                                    $('#eqid').html(value.identifier);
+                                    $('#eqtime').html(new Date(value.SendTime).Format("yyyy/MM/dd hh:mm:ss"));
+                                    $('#eqarea').html(value.magnitudeValue);
+                                    $('#eqdep').html(value.depth);
+                                    $('#eqcenter').html('<i>'+value.description+'</i><a class="btn small">位置：<i>'+value.epicenterLon+'°E '+value.epicenterLat+'°N</i></a>');
+                                    if(marker == null){
+                                        createCenter(value.epicenterLon,value.epicenterLat);
+                                    }else{
+                                        markerPosition = WGS84toTWD97(value.epicenterLon,value.epicenterLat);
+                                        marker.setPosition(markerPosition);
+                                        c1.setCenter(markerPosition);
+                                        c2.setCenter(markerPosition);
+                                        P_circle.setPath(c1); 
+                                        S_circle.setPath(c2);
+                                    }
+                                }else if(value.Source == "SITE"){
+                                    StationData.push(value);
+                                }else{
+                                    MapData.push(value);
+                                }
+                            })
+                            
+                            //map
+                            var end = new Date(MapData[MapData.length-1].EventTime.replace(/ /g,"T")).getTime();
+                            start = new Date(MapData[0].EventTime.replace(/ /g,"T")).getTime();
+                            totalTime = end - start;
+                            $.each(MapData,function(index,value){
+                                value.stepTime = new Date(value.EventTime.replace(/ /g,"T")).getTime() - start;
+                            })
+                            maxStep = MapData.length;
+                            //station
+                            $.each(StationData,function(index,value){
+                                value.stepTime = new Date(value.EventTime.replace(/ /g,"T")).getTime() - start;
+                            })
+                            //cwb
+                            $.each(cwbData,function(index,value){
+                                value.stepTime = new Date(value.SendTime.replace(/ /g,"T")).getTime() - start;
+                            })
+                        }
+                    },
+                    complete:function(){
+                        ShowClock(start,0);
+                        $('#map2').removeClass('loading');
+                        clearStep();
+                    }
+                })
+            }
+            function createCenter(lan,lat){
+                var ImgUrl = '/Images/map/center.png';
+                markerPosition = WGS84toTWD97(lan,lat);
+                var markerImg = new TGOS.TGImage(ImgUrl, new TGOS.TGSize(38, 34), new TGOS.TGPoint(0, 0), new TGOS.TGPoint(19, 17));
+                marker = CreateMarker(pMap,markerPosition,'',markerImg);
+                marker.setZIndex(5);
+                
+                c1 = new TGOS.TGCircle();
+                c1.setCenter(markerPosition);
+                c1.setRadius(0);
+                c2 = new TGOS.TGCircle();
+                c2.setCenter(markerPosition);
+                c2.setRadius(0);
+                P_circle = new TGOS.TGFill(pMap, c2, {
+                    strokeColor: '#ff0027',
+                    strokeWeight: 2,
+                    fillOpacity: 0
+                });
+                S_circle = new TGOS.TGFill(pMap, c2, {
+                    strokeColor: '#00FF00',
+                    strokeWeight: 2,
+                    fillOpacity: 0
+                });
+                P_circle.setZIndex(4);
+                S_circle.setZIndex(4);
+            }
+            $(function(){
+                $('header').load('Include/header.htm');
+                Authorize = checkAuth('EqHistoryPlay','R');
+                if(Authorize['R']){
+                    pMap = MapInit('map2');
+                    pMap.setCenter(new TGOS.TGPoint(296000, 2690000));
+                    //取得地區
+                    GetDetail(
+                        '/POSWEB/?action=GETSYSTOWNDATA',
+                        { "CMD":"GETSYSTOWNDATA"},
+                        function(response){
+                            if(response.status == 0){
+                                CityCountry = response.data;
+                                $('#map2').append('<div style="position:absolute;left:0;top:0;width:100%;height:100%;background-color:rgba(0, 0, 0, 0.29);" class ="loading" >Loading</div>');
+                            }
+                        },
+                        function(){
+                            $.each(CityCountry,function(i,v){
+                                var local = v.Name.replace(/-/g, "");
+                                var locator = new TGOS.TGLocateService()
+                                locator.locateTWD97({
+                                    district: local
+                                }, function (e, status) {
+                                    if (status != TGOS.TGLocatorStatus.OK) {
+                                         alert('查無行政區');
+                                        return;
+                                    }
+                                    var pgn = e[0].geometry.geometry;
+                                    Mapfill.push({
+                                        id:v.Code.toString(),
+                                        pgn:pgn,
+                                        pgnfill:null
+                                    })
+                                    if(CityCountry.length - 1 == i){
+                                        $('#map2 .loading').remove();
+                                    }
+                                });
+                            })
+                        })
+                    //站台資訊
+                    //地震預警站台訊息
+                    GetDetail(
+                        '/POSWEB/?action=GETSUBSCRIBESITELIST',
+                        { "CMD":"GETSUBSCRIBESITELIST","subSet":"CM","token":getStatus().token},
+                        function(res){
+                            if(res.status == 0){
+                                $.each(res.data,function(i,v){
+                                    var markerPosition = WGS84toTWD97(v.Site_Lon,v.Site_Lat);
+                                    var markerImg = new TGOS.TGImage(ImgUrl, new TGOS.TGSize(19, 17), new TGOS.TGPoint(0, 0), new TGOS.TGPoint(9.5, 8.5));
+                                    var station = CreateMarker(pMap,markerPosition,'',markerImg);
+                                    station.setZIndex(4);
+                                    StationMarker.push({
+                                        id:v.Main_Site_ID,
+                                        marker:station
+                                    })
+                                })
+                            }
+                        },
+                        function(){}, false, $('#map2'))
+                    $('.play').click(function(event){
+                        event.preventDefault();
+                        if(MapData.length != 0){
+                            if($(this).hasClass('pause')){
+                                $('select').prop('disabled',false)
+                                stop = false;
+                                $(this).removeClass('pause');
+                                clearInterval(timer);
+                                $(this).html('開始回放');
+                            }else{
+                                $('select').prop('disabled',true)
+                                if(i == maxStep){
+                                    clearStep();
+                                }
+                                stop = false;
+                                $(this).addClass('pause');
+                                reGetData();
+                                var g = 0;
+                                $(this).html('暫停回放');
+                            }
+                        }
+                    });
+                    $('.reset').click(function(event){
+                        event.preventDefault();
+                        window.location.reload();
+                    });
+                    $('#eventId').change(function(){
+                        var id = $(this).val();
+                        $('#map2').addClass('loading');
+                        GetEventData(id);
+                    })
+                }
+            })
+        </script>
+
+</head>
+
+<body class="status cwb s01">
+ 	
+<div class="bodybox w100">
+    <!-- header -->
+	<header>header</header>
+    <!-- header end -->
+    <!--  title  -->
+    <div class="title">
+      <h2>即時狀態 / 地震即時回放</h2>
+      <span class="clock"></span>
+    </div>
+    <!--  Content 氣象局 cwb -->
+    <div class="mainContent cwb">
+        <div class="block w66 h100">
+            <h6>地圖回放<b class="time mobile">2019/10/16 18:08:52</b></h6>
+            <div id="map2" class="map"></div>
+        </div>
+        <div class="block w33 hlock">
+            <h6>回放選擇</h6>
+            <div class="tablebox V sn06">
+                <ul>
+                    <li>年份：</li>
+                    <li>
+                        <select name="year" id="form_year" onchange="instantPlayFormUpdated()">
+                            <!-- <option value="2020">2020</option>
+                            <option value="2019">2019</option>
+                            <option value="2018">2018</option> -->
+                        </select>
+                    </li>
+                </ul>
+                <ul>
+                    <li>最大震度：</li>
+                    <li>
+                        <select name="site_level" id="site_level" onchange="instantPlayFormUpdated()">
+                            <option value="7">7</option>
+                            <option value="6.5">6強</option>
+                            <option value="6">6弱</option>
+                            <option value="5.5">5強</option>
+                            <option value="5">5弱</option>
+                            <option value="4">4</option>
+                            <option value="3" selected>3</option>
+                            <option value="2">2</option>
+                            <option value="1">1</option>
+                        </select>
+                    </li>
+                </ul>
+                <ul>
+                    <li>事件選擇：</li>
+                    <li>
+                        <select name="event_id" id="eventId">
+                            <option value="">請選取事件</option>
+                            <option value="20201028001001">20201028001001</option>
+                        </select>
+                    </li>
+                </ul>
+                <ul>
+                    <li>播放速度：</li>
+                    <li>
+                        <select name="" id="timespeed">
+                            <option value="0.5">0.5x</option>
+                            <option value="1">1x</option>
+                            <option value="2">2x</option>
+                            <option value="4">4x</option>
+                            <option value="8">8x</option>
+                        </select>
+                    </li>
+                </ul>
+            </div>
+            <div class="btnbox">
+			<div class="process">
+                <b></b>
+            </div>
+                <a class="before-micons btn play">開始回放</a>
+                <a class="before-micons btn reset">重新載入</a>
+            </div>
+            <h6>回放資訊</h6>
+            <div class="tablebox V sn03">
+                <ul>
+                    <li>編號：</li>
+                    <li id="eqid"></li>
+                </ul>
+                <ul>
+                    <li>時間：</li>
+                    <li id="eqtime"></li>
+                </ul>
+                <ul>
+                    <li>芮氏規模：</li>
+                    <li id="eqarea"></li>
+                </ul>
+                <ul>
+                    <li>地震深度：</li>
+                    <li id="eqdep"></li>
+                </ul>
+                <ul>
+                    <li>震央：</li>
+                    <li id="eqcenter">
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    // templately set here, and will ask knighter to move these codes to correct files;
+    $(document).ready(function() {
+        
+        console.log( "those process were Louis added." );
+
+        var today = new Date();
+        var thisYear = today.getFullYear();
+
+        $("#form_year").append('<option value="'+ thisYear +'" selected>'+ thisYear +'</option>');
+        $("#form_year").append('<option value="'+ (thisYear - 1) +'">'+ (thisYear - 1) +'</option>');
+        $("#form_year").append('<option value="'+ (thisYear - 2) +'">'+ (thisYear - 2) +'</option>');
+        $("#form_year").append('<option value="'+ (thisYear - 3) +'">'+ (thisYear - 3) +'</option>');
+
+        console.log("The field: #selected_year is updated.");
+
+        // 取得預設的form data;
+        instantPlayFormUpdated();
+
+    });
+
+    function instantPlayFormUpdated() {
+
+        var selectedYear = $("#form_year").val();
+        var selectedSiteLevel = $("#site_level").val();
+   
+        $.ajax({
+                    crossDomain: true,
+                    url: __Config.Setting.ServiceAPI + '/POSWEB/?action=INSTANTPLAYLIST',
+                    method: "POST",
+                    data: { "CMD":"INSTANTPLAYLIST","token":getStatus().token,"year":selectedYear, "level": selectedSiteLevel},
+                    cache:false,
+                    success:function(response){
+                        if(response.status == 0){
+                            var data = response.data;
+
+                            $('#eventId').html('<option value="">請選取事件</option>');
+                            
+                            $.each(data,function(index,value){
+                                // get result;
+                                $("#eventId").append('<option value="'+ value.event_id +'">'+ value.event_id +'</option>');
+                            })
+                            
+                        }
+                    },
+                    complete:function(){
+                        ShowClock(start,0);
+                        $('#map2').removeClass('loading');
+                        clearStep();
+                    }
+                });
+        
+    }
+
+
+
+</script>
+</body>
+</html>
