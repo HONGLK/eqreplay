@@ -12,13 +12,13 @@
          {
             "AreaCode":"10013230",
             "Source":"S00057",
-            "Intensity":"1",
+            "Intensity":"2",
             "PGA":"42.25013"
          },
          {
             "AreaCode":"10013240",
             "Source":"S00057",
-            "Intensity":"3",
+            "Intensity":"2",
             "PGA":"42.25013"
          },
          {
@@ -54,7 +54,7 @@
          {
             "AreaCode":"10014150",
             "Source":"S00057",
-            "Intensity":"5.5",
+            "Intensity":"6.5",
             "PGA":"42.25013"
          },
          {
@@ -79,19 +79,19 @@
          {
             "AreaCode":"10013230",
             "Source":"S00057",
-            "Intensity":"5",
+            "Intensity":"6",
             "PGA":"42.25013"
          },
          {
             "AreaCode":"10013240",
             "Source":"CWB",
-            "Intensity":"5",
+            "Intensity":"6.5",
             "PGA":"63.45645"
          },
          {
             "AreaCode":"10013250",
             "Source":"S00057",
-            "Intensity":"5",
+            "Intensity":"5.5",
             "PGA":"42.25013"
          },
          {
@@ -146,25 +146,25 @@
          {
             "AreaCode":"10013230",
             "Source":"S00057",
-            "Intensity":"1",
+            "Intensity":"4",
             "PGA":"42.25013"
          },
          {
             "AreaCode":"10013240",
             "Source":"CWB",
-            "Intensity":"1",
+            "Intensity":"3",
             "PGA":"63.45645"
          },
          {
             "AreaCode":"10013250",
             "Source":"S00057",
-            "Intensity":"1",
+            "Intensity":"5",
             "PGA":"42.25013"
          },
          {
             "AreaCode":"10013310",
             "Source":"S00057",
-            "Intensity":"1",
+            "Intensity":"6",
             "PGA":"42.25013"
          },
          {
@@ -182,25 +182,25 @@
          {
             "AreaCode":"10014090",
             "Source":"CWB",
-            "Intensity":"1",
+            "Intensity":"4",
             "PGA":"44.17536"
          },
          {
             "AreaCode":"10014100",
             "Source":"CWB",
-            "Intensity":"1",
+            "Intensity":"3",
             "PGA":"67.13156"
          },
          {
             "AreaCode":"10014140",
             "Source":"CWB",
-            "Intensity":"1",
+            "Intensity":"7",
             "PGA":"34.91992"
          },
          {
             "AreaCode":"10014150",
             "Source":"CWB",
-            "Intensity":"1",
+            "Intensity":"5",
             "PGA":"47.92553"
          },
          {
