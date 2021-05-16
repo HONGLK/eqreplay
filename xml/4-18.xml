@@ -1,0 +1,24 @@
+ <earthquake>                                            
+ <identifier>CWB-EEW108942501</identifier>               
+ <schemaVer>TW-CWB-XML-EEW:1.0</schemaVer>              
+ <language>zh-TW</language>                             
+ <event>地震警報</event>                             
+ <senderName>中華民國交通部中央氣象局</senderName>
+  <sent>2019-04-18T13:01:21+08:00</sent>                  
+  <status>Actual</status>               
+  <msgType>Alert</msgType>              
+  <msgNo>1</msgNo>                    
+  <description></description>           
+  <originTime>2019-04-18T13:01:07+08:00</originTime>     
+  <epicenter>                                            
+ 	 <epicenterLon unit="deg">121.53</epicenterLon>  
+ 	 <epicenterLat unit="deg">24.05</epicenterLat>   
+  </epicenter>                                           
+  <depth unit="km">20.0</depth>                 
+  <magnitude>                                            
+ 	 <magnitudeType>Mpd</magnitudeType>                   
+ 	 <magnitudeValue>6.1</magnitudeValue>                 
+  </magnitude>                                           
+   <pgaAdj>1.0</pgaAdj>                                  
+ </earthquake>	                                          
+ 
