@@ -43,7 +43,7 @@ def MQTT_to_EQreplay(file_name):
                         #print(payload)
                         #Areas.append(payload)
                         #mqtt_obj["Areas"].append()
-                        mqtt_obj["Areas"].append(payload)
+                        mqtt_obj["Sites"].append(payload)
                     mqtt.append(mqtt_obj)
                 #print(mqtt)
                 with open("4_18_replay_sites.json", mode="w") as f:
