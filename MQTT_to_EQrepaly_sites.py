@@ -16,37 +16,40 @@ def MQTT_to_EQreplay(file_name):
 
 
                 for i in data:
+                    print(i)
                     mqtt_obj = {
                         "Date": None,
                         "Time": None,
-                        "Sites": []
+                        "Sites": None
+                    }              
+
+                    payload = {
+                        "Site_Name": None,
+                        "Site_ID": None,
+                        "Site_Lat": None,
+                        "Site_Lon": None,
+                        "Site_Level": None,
+                        "PGAx": None
                     }
                     i = json.loads(i)
                     #print(i)
                     Date = i["EventTime"].split(" ")[0]
                     Time = i["EventTime"].split(" ")[1]
-                    Areas = []
+
                     mqtt_obj["Date"] = Date
                     mqtt_obj["Time"] = Time
 
-                    for area in i["Arealist"]:
-                        payload = {
-                            "AreaCode": None,
-                            "Source": None,
-                            "Intensity": None,
-                            "PGA": None
-                        }
-                        payload["AreaCode"]  = area["AreaCode"]
-                        payload["Intensity"] = area["IntensityX"]
-                        payload["PGA"] = area["PGAx"]
-                        payload["Source"] = area["Source"]
-                        #print(payload)
-                        #Areas.append(payload)
-                        #mqtt_obj["Areas"].append()
-                        mqtt_obj["Sites"].append(payload)
+
+                    payload["Site_ID"]  = i["SiteID"]
+                    payload["PGAx"] = i["PGAx"]
+
+                    #print(payload)
+                    #Areas.append(payload)
+                    #mqtt_obj["Areas"].append()
+                    mqtt_obj["Sites"] = payload
                     mqtt.append(mqtt_obj)
-                #print(mqtt)
-                with open("4_18_replay_sites.json", mode="w") as f:
+                #print(123)
+                with open("4_18_replay_sites.json", mode="a") as f:
                     f.write(str(mqtt))
                 
             except:
@@ -54,4 +57,5 @@ def MQTT_to_EQreplay(file_name):
     except:
         return "找不到mqtt檔案"
     
-data = MQTT_to_EQreplay("4_18.json")
+data = MQTT_to_EQreplay("RAW-site.json")
+print(data)
