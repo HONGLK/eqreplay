@@ -46,7 +46,7 @@ def MQTT_to_EQreplay(file_name):
                         mqtt_obj["Areas"].append(payload)
                     mqtt.append(mqtt_obj)
                 #print(mqtt)
-                with open("4_18_replay.json", mode="w") as f:
+                with open("alarm1_new.json", mode="w") as f:
                     f.write(str(mqtt))
                 
             except:
@@ -54,4 +54,4 @@ def MQTT_to_EQreplay(file_name):
     except:
         return "找不到mqtt檔案"
     
-data = MQTT_to_EQreplay("4_18.json")
+data = MQTT_to_EQreplay("alarm1_new.json")

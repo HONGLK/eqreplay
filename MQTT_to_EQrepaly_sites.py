@@ -20,7 +20,7 @@ def MQTT_to_EQreplay(file_name):
                     mqtt_obj = {
                         "Date": None,
                         "Time": None,
-                        "Sites": None
+                        "Sites": []
                     }              
 
                     payload = {
@@ -46,10 +46,10 @@ def MQTT_to_EQreplay(file_name):
                     #print(payload)
                     #Areas.append(payload)
                     #mqtt_obj["Areas"].append()
-                    mqtt_obj["Sites"] = payload
+                    mqtt_obj["Sites"].append(payload)
                     mqtt.append(mqtt_obj)
                 #print(123)
-                with open("4_18_replay_sites.json", mode="a") as f:
+                with open("site1_new.json", mode="a") as f:
                     f.write(str(mqtt))
                 
             except:
@@ -57,5 +57,5 @@ def MQTT_to_EQreplay(file_name):
     except:
         return "找不到mqtt檔案"
     
-data = MQTT_to_EQreplay("RAW-site.json")
+data = MQTT_to_EQreplay("site1_new.json")
 print(data)
