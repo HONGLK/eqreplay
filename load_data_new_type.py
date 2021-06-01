@@ -46,34 +46,34 @@ def load_site(filename):
 
 def pga_to_level(pga=float):
     if pga < 0.8:
-        level = "0"
+        level = 0
         return level
     elif pga >= 0.8 and pga < 2.5:
-        level = "1"
+        level = 1.0
         return level
     elif pga >= 2.5 and pga < 8.0:
-        level = "2"
+        level = 2.0
         return level
     elif pga >= 8.0 and pga < 25:
-        level = "3"
+        level = 3.0
         return level
     elif pga >= 25 and pga < 80:
-        level = "4"
+        level = 4.0
         return level
     elif pga >= 80 and pga < 140:
-        level = "5-"
+        level = 5.0
         return level
     elif pga >= 140 and pga < 250:
-        level = "5+"
+        level = 5.5
         return level
     elif pga >= 250 and pga < 440:
-        level = "6-"
+        level = 6.0
         return level
     elif pga >= 440 and pga < 800:
-        level = "6+"
+        level = 6.5
         return level
     elif pga >= 800 and pga < 2000:
-        level = "7"
+        level = 7.0
         return level
 
 #print(pga_to_level(float("188.8")))
