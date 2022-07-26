@@ -20,7 +20,7 @@ def load_site(filename):
         data = json.loads(d.read())
     site_data = pd.DataFrame(columns=["Site_ID", "Site_Lat", "Site_Lon", "Site_Level", "PGAx", "Trigger_Time"])
     print(os.getcwd())
-    loc = pd.read_csv(r"C:\\Users\\USER\\source\\repos\\eq_replay\\Source\\Site_loc.csv")
+    loc = pd.read_csv(f"C:\\Git\\eqreplay\\Source\\Site_loc.csv")
     
 
     for i in data:
