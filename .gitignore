@@ -1,2 +1,4 @@
-/Data
-/Output
+Data/*
+!Data/*.py
+Output/*
+!Output/Output
