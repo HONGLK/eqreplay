@@ -77,8 +77,10 @@ class Animation():
                 try:
                     if file.startswith("CWB"):
                         self.CWB_file = os.path.join(root, file)
+                        #print(self.CWB_file)
                     elif file.endswith('Alarm.json'):
-                        self.Alarm_file = os.path.join(root, file)                    
+                        self.Alarm_file = os.path.join(root, file)
+                        #print(self.Alarm_file)               
                     elif file.endswith('Site.json'):
                         self.Site_file = os.path.join(root, file)
                 except AttributeError as e:
@@ -350,7 +352,7 @@ class Animation():
 # In[101]:
 
 
-#draw = Animation('2022_06_20', 10, 80)
+#draw = Animation('2022_09_18', 10, 80)
 #draw.draw()
 
 

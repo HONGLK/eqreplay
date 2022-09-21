@@ -41,40 +41,40 @@ class dataTransfer():
             "Time":None,
             "Areas":[]
         }
-        try:
-            with open(path, 'r') as f:
-                data = f.readlines()
-                print(data)
-                arr = []
-                for li in data:
-                    msg["Areas"] = []
-                    line = json.loads(li)
-                    areaList = line["AreaList"]
-                    Date = line["SendTime"].split(" ")[0]
-                    Time = line["SendTime"].split(" ")[1]
-                    msg["Date"] = Date
-                    msg["Time"] = Time
-                    for i in areaList:
-                        detail = {
-                            "AreaCode":None,
-                            "Source":None,
-                            "PGAx":None
-                        }
-                        detail["AreaCode"] = i["AreaCode"]
-                        detail["Source"] = i["Source"]
-                        if i["Source"] == "CWB":
-                            detail["PGAx"] = round(float(i["PGAx"]), 4)
-                        detail["PGAx"] = float(i["PGAx"])
-                        msg["Areas"].append(detail)
-                    arr.append(msg.copy()) ### Weired situation check https://stackoverflow.com/questions/65397792/append-a-dictionary-in-a-list-with-loop-very-very-weird
+    # try:
+        with open(path, 'r') as f:
+            data = f.readlines()
+            print(data)
+            arr = []
+            for li in data:
+                msg["Areas"] = []
+                line = json.loads(li)
+                areaList = line["AreaList"]
+                Date = line["SendTime"].split(" ")[0]
+                Time = line["SendTime"].split(" ")[1]
+                msg["Date"] = Date
+                msg["Time"] = Time
+                for i in areaList:
+                    detail = {
+                        "AreaCode":None,
+                        "Source":None,
+                        "PGAx":None
+                    }
+                    detail["AreaCode"] = i["AreaCode"]
+                    detail["Source"] = i["Source"]
+                    if i["Source"] == "CWB":
+                        detail["PGAx"] = round(float(i["PGAx"]), 4)
+                    detail["PGAx"] = float(i["PGAx"])
+                    msg["Areas"].append(detail)
+                arr.append(msg.copy()) ### Weired situation check https://stackoverflow.com/questions/65397792/append-a-dictionary-in-a-list-with-loop-very-very-weird
 
-                with open(savepath, "w") as w:
-                    w.write(json.dumps(arr))
-                    # with open(savepath, "a+") as w:
-                    #     w.write(json.dumps(msg))
-        except Exception as e:
-            print(e)
-            pass
+            with open(savepath, "w") as w:
+                w.write(json.dumps(arr))
+                # with open(savepath, "a+") as w:
+                #     w.write(json.dumps(msg))
+    # except Exception as e:
+    #     print(e)
+    #     pass
 
 
 
