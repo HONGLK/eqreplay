@@ -83,7 +83,7 @@ if __name__ == '__main__':
     my_observer = Observer()
     my_observer.schedule(event_handler, path, recursive=go_recusively)
     my_observer.start()
-    print('WatchDog is on...')
+    print(f'WatchDog is on...\n Watching {path}')
     try:
         while 1:
             time.sleep(1)
