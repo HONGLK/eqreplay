@@ -15,7 +15,7 @@ COPY ./Data/Watchdog.py ./
 COPY ./Data/Transform.py ./
 COPY ./Source ./Source
 
-RUN pip install --trusted-host -r requirements.txt
+RUN python -m pip install -r requirements.txt
 
 
 CMD ["python3", "Watchdog.py"]
