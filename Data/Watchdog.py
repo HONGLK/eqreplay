@@ -6,7 +6,7 @@ import Transform
 import pathlib
 import sys
 from IPython import get_ipython
-sys.path.insert(0, '..\\Source\\')
+sys.path.insert(0, '.\\Source\\')
 from EQ_Animation_functionalized import Animation
 
 
