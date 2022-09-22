@@ -45,7 +45,7 @@ olefile @ file:///Users/ktietz/demo/mc3/conda-bld/olefile_1629805411829/work
 pandas @ file:///C:/ci/pandas_1635488579061/work
 parso==0.8.2
 pickleshare==0.7.5
-Pillow==8.4.0
+Pillow==9.0.1
 prompt-toolkit==3.0.22
 pycparser @ file:///tmp/build/80754af9/pycparser_1636541352034/work
 Pygments==2.10.0
