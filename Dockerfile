@@ -13,7 +13,7 @@ WORKDIR /app
 COPY ./requirements.txt ./
 COPY ./Data/Watchdog.py ./
 COPY ./Data/Transform.py ./
-COPY ./Source ./Source
+COPY ./Source ./
 
 RUN python -m pip install -r requirements.txt
 
