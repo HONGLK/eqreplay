@@ -17,5 +17,5 @@ COPY ./Source ./
 
 RUN python -m pip install -r requirements.txt
 
-VOLUME /home/pwaver/Git/NCREE_LineBot/Data:./Data
+VOLUME ["/home/pwaver/Git/NCREE_LineBot/Data"]
 CMD ["python3", "EQ_ANI_Watchdog.py", "--folder" "./Data"]
