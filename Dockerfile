@@ -11,8 +11,8 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 COPY ./requirements.txt ./
-COPY ./Data/Watchdog.py ./
-COPY ./Data/Transform.py ./
+COPY ./Data/EQ_ANI_Watchdog.py ./
+COPY ./Data/EQ_ANI_Transform.py ./
 COPY ./Source ./
 
 RUN python -m pip install -r requirements.txt
