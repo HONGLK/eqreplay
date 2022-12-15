@@ -27,7 +27,7 @@ class dataTransfer():
                 msg["Site_ID"] = line["SiteID"]
                 msg["PGAx"] = line["PGAx"]
                 if float(msg["PGAx"]) != 0:
-                    print(msg)
+                    #print(msg)
                     arr.append(msg.copy())
         with open(savepath, "w") as w:
             w.write(json.dumps(arr))
@@ -44,11 +44,14 @@ class dataTransfer():
     # try:
         with open(path, 'r') as f:
             data = f.readlines()
-            print(data)
+            #print(data)
             arr = []
             for li in data:
                 msg["Areas"] = []
                 line = json.loads(li)
+                MsgType = line["Type"]
+                if MsgType == "Exercise" or MsgType == "Test":
+                    continue
                 areaList = line["AreaList"]
                 Date = line["SendTime"].split(" ")[0]
                 Time = line["SendTime"].split(" ")[1]
