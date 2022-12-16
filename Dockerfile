@@ -11,11 +11,11 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 COPY ./requirements.txt ./
-COPY ./Data/EQ_ANI_Watchdog.py ./
-COPY ./Data/EQ_ANI_Transform.py ./
+COPY ./Data/EQ_ANI_Watchdog.py ./Data
+COPY ./Data/EQ_ANI_Transform.py ./Data
 COPY ./Source ./
 
 RUN python -m pip install -r requirements.txt
 
-#VOLUME /home/pwaver/Git/NCREE_LineBot/Data /app/Data
+VOLUME /home/pwaver/Git/NCREE_LineBot/Data /app/Data
 CMD ["python3", "EQ_ANI_Watchdog.py", "--folder" "./Data"]
