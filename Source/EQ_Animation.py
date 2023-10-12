@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[95]:
-
-
 import geopandas as gpd
 import pandas as pd
 import os, json, xmltodict, math
@@ -17,14 +11,9 @@ from matplotlib.colors import LinearSegmentedColormap
 from pathlib import Path
 #from IPython import get_ipython
 #get_ipython().run_line_magic('matplotlib', 'inline')
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import imageio
-
-
-# In[100]:
-
-
+import argparse
 class Animation():
     def __init__(self, dataFiles:list, fps=10, dpi=80):
         """_summary_
@@ -72,7 +61,7 @@ class Animation():
         self.loaddatafile()
         
         self.colormapconfig()
-        print(datetime.fromtimestamp(self.replay_start_time), self.site_geo.iloc[-1]["Trigger_Time"]+timedelta(seconds=1))
+        print(f"Replay start time: {datetime.fromtimestamp(self.replay_start_time)}", "Last alarm time:", self.site_geo.iloc[-1]["Trigger_Time"]+timedelta(seconds=1))
         #output config
         self.Image_path = os.path.join(self.root_path, "Output\\Images\\"+self.Identifier)
         self.Gif_path = os.path.join(self.root_path, "Output\\Gifs\\"+self.Identifier)
@@ -153,7 +142,7 @@ class Animation():
                     self.Msgtype = cwb_data.get("MsgType", None)
                     self.MsgNo = cwb_data.get("MsgNo", None)
                     self.Description = cwb_data.get("Description", None)
-                    self.CWBEventTime = datetime.strptime(cwb_data.get('EventTime', None), "%Y/%m/%d %H:%M:%S.%f")
+                    self.CWBEventTime = datetime.strptime(cwb_data.get('EventTime', None), "%Y/%m/%d %H:%M:%S.%f") # Hybrid CWB broadcast event time
                     Origintime = cwb_data.get("OriginTime", None)
                     self.Lat = float(cwb_data.get("EpiCenterLat", None))
                     self.Lon = float(cwb_data.get("EpiCenterLon", None))
@@ -258,7 +247,7 @@ class Animation():
             self.axes.figure.savefig(self.Image_path+"\\"+self.replay_time_str+".png", dpi=self.dpi)
 
         self.data_index = 0
-    
+
     def loadshapefile(self):
         """Load GEO shapefile.
 
@@ -271,6 +260,7 @@ class Animation():
             self.crs = self.county.crs
         except Exception as e:
             return 'loadshapefile Error'
+
     def loaddatafile(self):
         """Load alarm data.
 
@@ -371,13 +361,15 @@ class Animation():
 
                 #print(draw_area)
                 draw_area.plot("Intensity", ax=self.axes, cmap=self.cmap, norm=self.norm)
-
-                self.data_index += 1
+                if self.data_index < len(self.data)-1:
+                    self.data_index += 1
 
             #P波、S波及字串處理
             ##1.P波、S波的累加
-            self.p_radius += self.p_speed*self.frame_rate*(1/self.frame_rate)
-            self.s_radius += self.s_speed*self.frame_rate*(1/self.frame_rate)
+            # self.p_radius += self.p_speed*self.frame_rate*(1/self.frame_rate)
+            # self.s_radius += self.s_speed*self.frame_rate*(1/self.frame_rate)
+            self.p_radius += self.p_speed*(10/self.frame_rate)
+            self.s_radius += self.s_speed*(10/self.frame_rate)
             ##2.時間字串處理
             self.axes.texts[-3].set_text((self.replay_time_str.replace("_",":")+ "({})".format(round(self.replay_time.timestamp() - self.cwb_origin_time ,2))))
 
@@ -410,3 +402,19 @@ class Animation():
         print("張數:",len(img))
         imageio.mimsave(os.path.join(self.Gif_path, self.Identifier+".gif"), img, fps=self.frame_rate)
         return os.path.join(self.Gif_path, self.Identifier+".gif")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Generate earthquake animations.")
+    
+    parser.add_argument("--fps", type=int, default=10, help="Set frames per second for animation.")
+    parser.add_argument("--dpi", type=int, default=80, help="Set DPI for the output image.")
+    parser.add_argument("--datafiles", nargs='+', help="List of data files for the animation. Must include 'CWB', 'Alarm', 'Site' file. (Separate with space.)")
+    
+    args = parser.parse_args()
+    
+    animation = Animation(dataFiles=args.datafiles, fps=args.fps, dpi=args.dpi)
+    animation.draw()
+    gif_path = animation.creategif()
+    
+    print(f"Animation saved to: {gif_path}")
