@@ -10,10 +10,8 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
-COPY ./requirements.txt ./
-COPY ./Data/EQ_ANI_Watchdog.py ./Data
-COPY ./Data/EQ_ANI_Transform.py ./Data
-COPY ./Source ./
+COPY ./requirements.txt ./Source ./
+COPY ./Data/EQ_ANI_Watchdog.py ./Data/EQ_ANI_Transform.py ./Data/
 
 RUN python -m pip install -r requirements.txt
 

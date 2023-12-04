@@ -10,9 +10,11 @@ import sys
 import argparse
 import json
 import ast
+import subprocess
 
 sys.path.insert(0, '.\\Source\\')
 from EQ_Animation import Animation
+
 def toTransform(event):
         filename = os.path.basename(event.src_path)
         filepath = os.path.normpath(event.src_path)
@@ -165,9 +167,10 @@ if __name__ == '__main__':
                     print('time has arrived, choose files to create gif.')
                     files = collectDataFiles(CWB_FILE)
                     print('selectFiles:', files)
-                    Ani = Animation(files)
+                    Ani = Animation(dataFiles=files)
                     Ani.draw()
                     gifPath = Ani.creategif()
+                    print(gifPath)
                     CWB_FILE = [False]
                     Site_FILE = [False]
                     Alarm_FILE = [False]
