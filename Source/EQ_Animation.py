@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[95]:
-
-
 import geopandas as gpd
 import pandas as pd
 import os, json, xmltodict, math
@@ -17,20 +11,23 @@ from matplotlib.colors import LinearSegmentedColormap
 from pathlib import Path
 #from IPython import get_ipython
 #get_ipython().run_line_magic('matplotlib', 'inline')
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import imageio
-
-
-# In[100]:
-
-
+import argparse
 class Animation():
-    def __init__(self, chooseEvent, fps=10, dpi=80):
+    def __init__(self, dataFiles:list, fps=10, dpi=80):
+        """_summary_
+
+        Args:
+            dataFiles (list): List of dataFiles for animation module to generate gif. Must contain 'CWB', 'Alarm' and 'Site' file.
+            fps (int, optional): fps. Defaults to 10.
+            dpi (int, optional): dpi. Defaults to 80.
+        """
         # Basic Setting
         self.root_path = os.path.normpath("C:\\Git\\eqreplay")
         self.shapefile_path = os.path.join(self.root_path, "Source\\Shapefile")
-        self.data_folder = os.path.join(self.root_path, "Data", chooseEvent)
+        self.dataFiles = dataFiles
+        #self.data_folder = os.path.join(self.root_path, "Data", chooseEvent)
         self.dpi = dpi
         self.init = True
         # Vars
@@ -64,7 +61,7 @@ class Animation():
         self.loaddatafile()
         
         self.colormapconfig()
-        print(self.replay_start_time, self.site_geo.iloc[-1]["Trigger_Time"]+timedelta(seconds=1))
+        print(f"Replay start time: {datetime.fromtimestamp(self.replay_start_time)}", "Last alarm time:", self.site_geo.iloc[-1]["Trigger_Time"]+timedelta(seconds=1))
         #output config
         self.Image_path = os.path.join(self.root_path, "Output\\Images\\"+self.Identifier)
         self.Gif_path = os.path.join(self.root_path, "Output\\Gifs\\"+self.Identifier)
@@ -72,18 +69,40 @@ class Animation():
         Path(self.Gif_path).mkdir(parents=True, exist_ok=True)
         
     def loadfile(self):
-        for root, dirs, files in os.walk(self.data_folder):
-            for file in files:
-                try:
-                    if file.startswith("CWB"):
-                        self.CWB_file = os.path.join(root, file)
-                    elif file.endswith('Alarm.json'):
-                        self.Alarm_file = os.path.join(root, file)                    
-                    elif file.endswith('Site.json'):
-                        self.Site_file = os.path.join(root, file)
-                except AttributeError as e:
-                    print(e)
-                    return '1'
+        try:
+            checklist={
+                "CWB":False,
+                "Alarm":False,
+                "Site":False
+            }
+            for file in self.dataFiles:
+                if file.endswith(".txt"):
+                    self.CWB_file = file
+                    checklist['CWB'] = True
+                elif file.endswith('Site.json'):
+                    self.Site_file = file
+                    checklist['Site'] = True
+                elif file.endswith('Alarm.json'):
+                    self.Alarm_file = file
+                    checklist['Alarm'] = True
+            if not all(checklist.values()):
+                return "dataFile error please check."
+        except Exception as e:
+            return "error"
+        # for root, dirs, files in os.walk(self.data_folder):
+        #     for file in files:
+        #         try:
+        #             if file.startswith("CWB"):
+        #                 self.CWB_file = os.path.join(root, file)
+        #                 #print(self.CWB_file)
+        #             elif file.endswith('Alarm.json'):
+        #                 self.Alarm_file = os.path.join(root, file)
+        #                 #print(self.Alarm_file)               
+        #             elif file.endswith('Site.json'):
+        #                 self.Site_file = os.path.join(root, file)
+        #         except AttributeError as e:
+        #             print(e)
+        #             return '1'
                     
     def CWBconfig(self):
         try:
@@ -123,6 +142,7 @@ class Animation():
                     self.Msgtype = cwb_data.get("MsgType", None)
                     self.MsgNo = cwb_data.get("MsgNo", None)
                     self.Description = cwb_data.get("Description", None)
+                    self.CWBEventTime = datetime.strptime(cwb_data.get('EventTime', None), "%Y/%m/%d %H:%M:%S.%f") # Hybrid CWB broadcast event time
                     Origintime = cwb_data.get("OriginTime", None)
                     self.Lat = float(cwb_data.get("EpiCenterLat", None))
                     self.Lon = float(cwb_data.get("EpiCenterLon", None))
@@ -156,6 +176,8 @@ class Animation():
             return 'CWB Error'
     
     def colormapconfig(self):
+        """ColorBar initial.
+        """
         # Color Bar color setting
         self.color_map = [
                 '#C4FBE2',
@@ -172,6 +194,12 @@ class Animation():
         self.cmap, self.norm = matplotlib.colors.from_levels_and_colors(self.cLevel, self.color_map)#, extend="max")
     
     def mapinit(self):
+        """Map initial.
+        
+        - Set picture center.
+        - Set EPI center.
+        - Set fonts.
+        """
         #map init
         f, self.axes = plt.subplots(figsize=(700/self.dpi, 760/self.dpi))
         #print(type(f), type(self.axes))
@@ -209,6 +237,7 @@ class Animation():
         self.eq_center.plot(ax=self.axes, color="#00ffaa", marker="*", markersize=1000, zorder=3)
 
         #before_event_process
+        print('Before event loop.')
         while self.replay_time <= datetime.fromtimestamp(self.cwb_origin_time):
             self.replay_time += timedelta(seconds=(1/self.frame_rate))
             print(self.replay_time)
@@ -218,20 +247,36 @@ class Animation():
             self.axes.figure.savefig(self.Image_path+"\\"+self.replay_time_str+".png", dpi=self.dpi)
 
         self.data_index = 0
-    
+
     def loadshapefile(self):
+        """Load GEO shapefile.
+
+        Returns:
+            None
+        """
         try:
             self.town = gpd.read_file(self.shapefile_path+"\TOWN_MOI_1091016.shp", encoding="utf-8")
             self.county = gpd.read_file(self.shapefile_path+"\COUNTY_MOI_1090820.shp", encoding="utf-8")
             self.crs = self.county.crs
         except Exception as e:
             return 'loadshapefile Error'
+
     def loaddatafile(self):
+        """Load alarm data.
+
+        Returns:
+            None
+        """
         try:
-        
             # MQTT Data
             self.data = ld.load_data(self.Alarm_file)
             self.replay_end_time = datetime.strptime(self.data[-1]["Date"]+" "+self.data[-1]["Time"], "%Y-%m-%d %H:%M:%S.%f").timestamp() #data.iloc[-1, 0].timestamp()
+            print(f"CWBEventTime: {self.CWBEventTime.timestamp()}, ReplayEndTime: {self.replay_end_time} ")
+            if self.CWBEventTime.timestamp() > self.replay_end_time:
+                print('true')
+                self.replay_end_time = self.CWBEventTime.timestamp() + 3
+                
+            #print(self.CWBEventTime.timestamp(), self.replay_end_time)
             self.replay_loop = round((self.replay_end_time-self.replay_start_time)/(1/self.frame_rate))
             
             # SITE Data
@@ -255,6 +300,10 @@ class Animation():
             return 'loaddatafile Error'
         
     def draw(self):
+        """Using transformed data to draw animation pics.
+        
+        *call creategif to create animation gif.
+        """
         self.mapinit()
         for time in range(self.replay_loop):
 
@@ -312,13 +361,15 @@ class Animation():
 
                 #print(draw_area)
                 draw_area.plot("Intensity", ax=self.axes, cmap=self.cmap, norm=self.norm)
-
-                self.data_index += 1
+                if self.data_index < len(self.data)-1:
+                    self.data_index += 1
 
             #P波、S波及字串處理
             ##1.P波、S波的累加
-            self.p_radius += self.p_speed*self.frame_rate*(1/self.frame_rate)
-            self.s_radius += self.s_speed*self.frame_rate*(1/self.frame_rate)
+            # self.p_radius += self.p_speed*self.frame_rate*(1/self.frame_rate)
+            # self.s_radius += self.s_speed*self.frame_rate*(1/self.frame_rate)
+            self.p_radius += self.p_speed*(10/self.frame_rate)
+            self.s_radius += self.s_speed*(10/self.frame_rate)
             ##2.時間字串處理
             self.axes.texts[-3].set_text((self.replay_time_str.replace("_",":")+ "({})".format(round(self.replay_time.timestamp() - self.cwb_origin_time ,2))))
 
@@ -328,7 +379,7 @@ class Animation():
             
             #回放時間超過最後觸發站台則停止
             print(self.replay_time)
-            if self.replay_time > self.site_geo.iloc[-1]["Trigger_Time"]+timedelta(seconds=1):
+            if self.replay_time > self.site_geo.iloc[-1]["Trigger_Time"]+timedelta(seconds=5):
                 break
 
             #儲存後的動作
@@ -337,6 +388,11 @@ class Animation():
             self.replay_time += timedelta(seconds=(1/self.frame_rate))
             
     def creategif(self):
+        """Using pics to create animation gif.
+
+        Returns:
+            String: The location of animation gif.
+        """
         impath = self.Image_path
         filenames = os.listdir(impath)
         img = []
@@ -345,23 +401,20 @@ class Animation():
             img.append(imageio.imread(os.path.join(impath, filename)))
         print("張數:",len(img))
         imageio.mimsave(os.path.join(self.Gif_path, self.Identifier+".gif"), img, fps=self.frame_rate)
+        return os.path.join(self.Gif_path, self.Identifier+".gif")
 
 
-# In[101]:
-
-
-#draw = Animation('2022_06_20', 10, 80)
-#draw.draw()
-
-
-# In[102]:
-
-
-#draw.creategif()
-
-
-# In[ ]:
-
-
-
-
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Generate earthquake animations.")
+    
+    parser.add_argument("--fps", type=int, default=10, help="Set frames per second for animation.")
+    parser.add_argument("--dpi", type=int, default=80, help="Set DPI for the output image.")
+    parser.add_argument("--datafiles", nargs='+', help="List of data files for the animation. Must include 'CWB', 'Alarm', 'Site' file. (Separate with space.)")
+    
+    args = parser.parse_args()
+    
+    animation = Animation(dataFiles=args.datafiles, fps=args.fps, dpi=args.dpi)
+    animation.draw()
+    gif_path = animation.creategif()
+    
+    print(f"Animation saved to: {gif_path}")
